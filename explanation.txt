@@ -1,0 +1,30 @@
+﻿Explain The Attacker’s Authoritative NS
+
+
+The attacker’s authoritative name server is a fake DNS server used solely to support the cache-poisoning attack. 
+It receives the DNS queries that BIND9 sends for the attacker-controlled domain (attacker.cybercourse.example.com) 
+and thereby learns the resolver’s random UDP source port - a value that must be matched by any valid spoofed response.
+The attacker-auth NS performs no poisoning itself.
+It simply forwards the discovered source port to the attacker-client over a TCP control channel 
+so the attacker-client can craft correctly formed forged DNS responses.
+
+
+Explain The Attacker’s Client
+
+
+The attacker’s client triggers the resolver’s query and sends forged DNS responses. 
+Using the resolver’s UDP source port (learned from the attacker-auth NS), 
+it builds spoofed packets with a randomized TXID, a fake root-server source IP, 
+and a poisoned A record for 6.6.6.6.
+From a dig exchange between the resolver and the authoritative server, 
+we measured a RTT of ~200 ms, which defines the attack’s time window. 
+
+To remain within the allowed packet limit, we executed 436 rounds.
+
+Our VM was able to send ~3,000 DNS-sized packets within each 200 ms window.
+
+Each round consisted of:
+1. One legitimate query to trigger a resolver request:
+ww%d.example1.cybercourse.example.com
+2. 3,000 spoofed responses attempting to guess the correct TXID.
+The malicious A record is inserted as a glue record in the Additional section.
